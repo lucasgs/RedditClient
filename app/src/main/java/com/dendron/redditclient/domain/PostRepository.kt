@@ -1,7 +1,7 @@
 package com.dendron.redditclient.domain
 
-import com.dendron.redditclient.remote.ResultWrapper
+import com.dendron.redditclient.domain.model.Post
 
 interface PostRepository {
-    suspend fun getPosts(limit: Int): ResultWrapper
+    suspend fun getPosts(limit: Int): ResultWrapper<List<Post>>
 }
