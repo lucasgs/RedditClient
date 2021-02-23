@@ -40,11 +40,11 @@ class PostRepositoryImpTest {
 
             val result = ResultWrapper.Success(emptyList())
 
-            Mockito.`when`(remoteDataSource.getPosts()).thenReturn(result)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
 
-            val expected = repository.getPosts()
+            val expected = repository.getPosts(POST_LIMIT)
 
-            Mockito.verify(remoteDataSource, times(1)).getPosts()
+            Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
             assert(result == expected)
 
@@ -55,12 +55,16 @@ class PostRepositoryImpTest {
         runBlockingTest {
             val message = "ERROR"
             val result = ResultWrapper.Error(message)
-            Mockito.`when`(remoteDataSource.getPosts()).thenReturn(result)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
 
-            val expected = repository.getPosts()
+            val expected = repository.getPosts(POST_LIMIT)
 
-            Mockito.verify(remoteDataSource, times(1)).getPosts()
+            Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
             assert(result == expected)
         }
+
+    companion object {
+        const val POST_LIMIT = 2;
+    }
 }

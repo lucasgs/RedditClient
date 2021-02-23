@@ -4,6 +4,6 @@ import com.dendron.redditclient.remote.ResultWrapper
 
 interface RemoteDataSource {
 
-    suspend fun getPosts(): ResultWrapper
+    suspend fun getPosts(limit: Int): ResultWrapper
 
 }
