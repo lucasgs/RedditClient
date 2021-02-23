@@ -1,4 +1,4 @@
-package com.dendron.redditclient.remote
+package com.dendron.redditclient.remote.model
 
 
 import com.google.gson.annotations.SerializedName

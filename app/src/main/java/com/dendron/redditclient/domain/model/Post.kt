@@ -1,4 +1,4 @@
-package com.dendron.redditclient.domain
+package com.dendron.redditclient.domain.model
 
 class Post(
     private val id: String,
@@ -6,5 +6,5 @@ class Post(
     private val author: String,
     private val thumbnail: String?,
     private val comments: Int,
-    private val created: Float,
+    private val created: Int,
 )
