@@ -4,14 +4,14 @@ import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.remote.model.PostResponse
 
-sealed class ResultWrapper<T> {
-    data class Success<T>(private val data: T) : ResultWrapper<T>()
-    data class Error<T>(private val message: String) : ResultWrapper<T>()
+sealed class ResultWrapper {
+    data class Success(val data: List<Post>) : ResultWrapper()
+    data class Error(val message: String) : ResultWrapper()
 }
 
 class RedditRemoteDataSource(private val redditApi: RedditApi) : RemoteDataSource {
 
-    override suspend fun getPosts(): ResultWrapper<List<Post>> {
+    override suspend fun getPosts(): ResultWrapper {
 
         // TODO: 2/22/21 check internet connection
 
