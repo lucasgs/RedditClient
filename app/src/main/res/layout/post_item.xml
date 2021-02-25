@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/imageViewReadIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/selector_circle_blue"
+        android:contentDescription="@string/read_unread_indicator_text"/>
+
+    <TextView
+        android:id="@+id/textViewAuthor"
+        style="@style/MediumFont"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewReadIndicator"
+        app:layout_constraintStart_toEndOf="@+id/imageViewReadIndicator"
+        app:layout_constraintTop_toTopOf="@+id/imageViewReadIndicator"
+        tools:text="author_name" />
+
+    <TextView
+        android:id="@+id/textViewHours"
+        style="@style/SmallFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewAuthor"
+        app:layout_constraintStart_toEndOf="@+id/textViewAuthor"
+        app:layout_constraintTop_toTopOf="@+id/textViewAuthor"
+        tools:text="18 hours ago" />
+
+    <ImageView
+        android:id="@+id/imageViewThumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAuthor"
+        android:contentDescription="@string/the_image_attached_to_the_post_text"
+        app:srcCompat="@drawable/selector_circle_blue" />
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        style="@style/SmallFont"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:lines="2"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewThumbnail"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewChevron"
+        app:layout_constraintStart_toEndOf="@+id/imageViewThumbnail"
+        app:layout_constraintTop_toTopOf="@+id/imageViewThumbnail"
+        tools:text="This is a description" />
+
+    <ImageView
+        android:id="@+id/imageViewChevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textViewTitle"
+        android:contentDescription="@string/display_post_text"
+        app:srcCompat="@drawable/ic_chevron_right" />
+
+    <Button
+        android:id="@+id/buttonDismissPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/dismiss_post_title"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewThumbnail" />
+
+    <TextView
+        android:id="@+id/textViewComments"
+        style="@style/OrangeFontStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonDismissPost"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewChevron"
+        app:layout_constraintTop_toTopOf="@+id/buttonDismissPost"
+        tools:text="4500 comments" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonDismissPost" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="4dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
