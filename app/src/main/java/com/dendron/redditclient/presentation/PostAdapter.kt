@@ -41,11 +41,15 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
         private val imageViewThumbnail: ImageView = itemView.findViewById(R.id.imageViewThumbnail)
 
         fun setPost(post: Post) {
+            imageViewThumbnail.loadImage(post.thumbnail)
             textViewAuthor.text = post.author
             textViewHours.text = post.created.toString()
             textViewTitle.text = post.title
-            textViewComments.text = post.comments.toString()
-            imageViewThumbnail.loadImage(post.thumbnail)
+            textViewComments.text = itemView.context.resources.getQuantityString(
+                R.plurals.comments_number_text,
+                post.comments,
+                post.comments
+            )
         }
     }
 }
