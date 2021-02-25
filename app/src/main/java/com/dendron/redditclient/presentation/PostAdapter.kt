@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.dendron.redditclient.R
 import com.dendron.redditclient.domain.model.Post
 
-class PostAdapter: RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     private val items = mutableListOf<Post>()
 
@@ -32,8 +32,7 @@ class PostAdapter: RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = items.size
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val textViewAuthor: TextView = itemView.findViewById(R.id.textViewAuthor)
         private val textViewHours: TextView = itemView.findViewById(R.id.textViewHours)
@@ -56,5 +55,6 @@ fun ImageView.loadImage(url: String?) {
         .with(this.context)
         .load(url)
         .centerCrop()
+        .error(R.drawable.ic_no_image)
         .into(this)
 }
