@@ -3,8 +3,10 @@ package com.dendron.redditclient.presentation
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.dendron.redditclient.R
 import com.dendron.redditclient.domain.model.Post
 
@@ -37,13 +39,22 @@ class PostAdapter: RecyclerView.Adapter<PostAdapter.ViewHolder>() {
         private val textViewHours: TextView = itemView.findViewById(R.id.textViewHours)
         private val textViewTitle: TextView = itemView.findViewById(R.id.textViewTitle)
         private val textViewComments: TextView = itemView.findViewById(R.id.textViewComments)
+        private val imageViewThumbnail: ImageView = itemView.findViewById(R.id.imageViewThumbnail)
 
         fun setPost(post: Post) {
             textViewAuthor.text = post.author
             textViewHours.text = post.created.toString()
             textViewTitle.text = post.title
             textViewComments.text = post.comments.toString()
+            imageViewThumbnail.loadImage(post.thumbnail)
         }
     }
+}
 
+fun ImageView.loadImage(url: String?) {
+    Glide
+        .with(this.context)
+        .load(url)
+        .centerCrop()
+        .into(this)
 }
