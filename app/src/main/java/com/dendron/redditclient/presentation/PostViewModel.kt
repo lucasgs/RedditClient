@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 sealed class UiState {
@@ -21,7 +22,7 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
 
     fun getPosts(limit: Int = 10) {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             when(val result = postRepository.getPosts(limit)) {
                 is ResultWrapper.Error -> events.postValue(UiState.Error(result.message))
                 is ResultWrapper.Success -> events.postValue(UiState.Load(result.data))

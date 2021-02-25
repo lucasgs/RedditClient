@@ -5,5 +5,5 @@ import com.dendron.redditclient.domain.PostRepository
 import org.koin.dsl.module
 
 val dataModule = module {
-    single<PostRepository> { PostRepositoryImp(get()) }
+    single<PostRepository> { PostRepositoryImp(get(), get()) }
 }
