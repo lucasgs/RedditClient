@@ -56,5 +56,6 @@ fun ImageView.loadImage(url: String?) {
         .load(url)
         .centerCrop()
         .error(R.drawable.ic_no_image)
+        .placeholder(R.drawable.ic_no_image)
         .into(this)
 }
