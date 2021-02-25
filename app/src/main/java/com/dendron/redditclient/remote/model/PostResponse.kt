@@ -44,7 +44,7 @@ data class PostResponse(
                 @SerializedName("clicked") val clicked: Boolean,
                 @SerializedName("content_categories") val contentCategories: Any,
                 @SerializedName("contest_mode") val contestMode: Boolean,
-                @SerializedName("created") val created: Int,
+                @SerializedName("created") val created: Long,
                 @SerializedName("created_utc") val createdUtc: Int,
                 @SerializedName("discussion_type") val discussionType: Any,
                 @SerializedName("distinguished") val distinguished: Any,

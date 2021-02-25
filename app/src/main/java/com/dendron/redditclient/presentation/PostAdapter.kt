@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.dendron.redditclient.R
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.util.loadImage
+import com.dendron.redditclient.util.toRelativeTime
 
 class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
@@ -43,7 +44,7 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
         fun setPost(post: Post) {
             imageViewThumbnail.loadImage(post.thumbnail)
             textViewAuthor.text = post.author
-            textViewHours.text = post.created.toString()
+            textViewHours.text = post.created.toRelativeTime()
             textViewTitle.text = post.title
             textViewComments.text = itemView.context.resources.getQuantityString(
                 R.plurals.comments_number_text,
@@ -52,14 +53,4 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
             )
         }
     }
-}
-
-fun ImageView.loadImage(url: String?) {
-    Glide
-        .with(this.context)
-        .load(url)
-        .centerCrop()
-        .error(R.drawable.ic_no_image)
-        .placeholder(R.drawable.ic_no_image)
-        .into(this)
 }
