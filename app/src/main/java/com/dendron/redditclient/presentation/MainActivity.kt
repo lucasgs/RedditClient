@@ -65,11 +65,22 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             is UiState.Error -> Log.e("", state.message)
             is UiState.Load -> loadPosts(state.posts)
-            is UiState.PostDismissed -> postAdapter.setPostDeleted(state.post)
+            is UiState.PostDismissed -> {
+                postAdapter.setPostDeleted(state.post)
+                cleanPostDetails()
+            }
             is UiState.PostRead -> {
                 postAdapter.markPostAsRead(state.post)
                 showPostDetails(state.post)
             }
+        }
+    }
+
+    private fun cleanPostDetails() {
+        binding.apply {
+            textViewAuthor.text = ""
+            imageViewImage.loadImage(null)
+            textViewTitle.text = ""
         }
     }
 

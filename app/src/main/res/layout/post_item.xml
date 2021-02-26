@@ -43,7 +43,7 @@
         android:id="@+id/imageViewThumbnail"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/the_image_attached_to_the_post_text"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/textViewAuthor"
@@ -76,14 +76,13 @@
 
     <Button
         android:id="@+id/buttonDismissPost"
-        android:padding="0dp"
+        style="@style/SmallWhiteFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/dismiss_post_title"
         android:drawableLeft="@drawable/ic_dismiss"
         android:drawablePadding="0dp"
-        style="@style/SmallWhiteFont"
+        android:padding="0dp"
+        android:text="@string/dismiss_post_title"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/imageViewThumbnail" />
 
@@ -101,8 +100,12 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonDismissPost" />
 
     <androidx.constraintlayout.widget.Guideline
