@@ -15,4 +15,7 @@ interface PostDao {
     @Delete
     fun delete(post: PostEntity)
 
+    @Query("DELETE FROM Post")
+    fun deleteAll()
+
 }

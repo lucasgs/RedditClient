@@ -12,6 +12,7 @@
         android:theme="@style/Theme.RedditClient"
         android:name=".MainApplication"
         android:requestLegacyExternalStorage="true"
+        android:configChanges="orientation|screenSize|keyboard"
         android:allowBackup="false">
         <activity android:name=".presentation.MainActivity">
             <intent-filter>

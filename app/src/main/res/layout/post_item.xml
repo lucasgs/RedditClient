@@ -92,9 +92,10 @@
         style="@style/OrangeFontStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/buttonDismissPost"
         app:layout_constraintEnd_toStartOf="@+id/imageViewChevron"
+        app:layout_constraintStart_toEndOf="@+id/buttonDismissPost"
         app:layout_constraintTop_toTopOf="@+id/buttonDismissPost"
         tools:text="4500 comments" />
 

@@ -18,6 +18,9 @@ class LocalDataSourceImp(private val appDatabase: AppDatabase) : LocalDataSource
         appDatabase.userDao().delete(post.toModel())
     }
 
+    override suspend fun deleteAll() {
+        appDatabase.userDao().deleteAll()
+    }
 }
 
 private fun Post.toModel() = PostEntity(

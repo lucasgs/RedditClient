@@ -10,4 +10,6 @@ interface LocalDataSource {
 
     suspend fun delete(post: Post)
 
+    suspend fun deleteAll()
+
 }

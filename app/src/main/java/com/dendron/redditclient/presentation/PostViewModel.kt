@@ -46,7 +46,9 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     }
 
     fun dismissAll() {
-        // TODO: 2/25/21 Add status to db
-        events.postValue(UiState.AllDismissed)
+        viewModelScope.launch(Dispatchers.IO) {
+            postRepository.dismissAll()
+            events.postValue(UiState.AllDismissed)
+        }
     }
 }

@@ -24,19 +24,21 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
     }
 
     fun setPostDeleted(post: Post) {
+        val index = items.indexOf(post)
         items.remove(post)
-        notifyDataSetChanged()
+        notifyItemRemoved(index)
     }
 
     fun markPostAsRead(post: Post) {
         val index = items.indexOf(post)
         items[index].status = Status.read
-        notifyDataSetChanged()
+        notifyItemChanged(index)
     }
 
     fun dismissAll() {
+        val count = items.size
         items.clear()
-        notifyDataSetChanged()
+        notifyItemRangeRemoved(0, count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

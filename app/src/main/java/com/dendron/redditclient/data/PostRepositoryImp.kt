@@ -27,4 +27,8 @@ class PostRepositoryImp(
         localDataSource.delete(post)
     }
 
+    override suspend fun dismissAll() {
+        localDataSource.deleteAll()
+    }
+
 }
