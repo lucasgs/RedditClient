@@ -25,6 +25,7 @@ private fun Post.toModel() = PostEntity(
     title = title,
     author = author,
     thumbnail = thumbnail,
+    image = image,
     comments = comments,
     created = created,
 )
@@ -34,6 +35,7 @@ private fun PostEntity.toDomain() = Post(
     title = title,
     author = author,
     thumbnail = thumbnail,
+    image = image,
     comments = comments,
     created = created,
 )

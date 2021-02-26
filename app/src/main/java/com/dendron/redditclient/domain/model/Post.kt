@@ -5,6 +5,7 @@ data class Post(
     val title: String,
     val author: String,
     val thumbnail: String?,
+    val image: String?,
     val comments: Int,
     val created: Long,
 )

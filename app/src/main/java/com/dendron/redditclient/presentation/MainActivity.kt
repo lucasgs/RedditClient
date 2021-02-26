@@ -1,8 +1,10 @@
 package com.dendron.redditclient.presentation
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dendron.redditclient.databinding.ActivityMainBinding
 import com.dendron.redditclient.domain.model.Post
@@ -12,10 +14,26 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: PostViewModel by inject()
 
-    private val postAdapter = PostAdapter()
+    private val postAdapter by lazy { PostAdapter(callback) }
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val callback = object : PostAdapter.Callback {
+        override fun onThumbnailTapped(post: Post) {
+            post.image?.let { image ->
+                openPicture(image)
+            }
+        }
+
+        override fun onPostTapped(post: Post) {
+            Log.i("", "onPostTapped")
+        }
+
+        override fun onPostDismissed(post: Post) {
+            Log.i("", "onPostDismissed")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleEvents(state: UiState) {
         binding.swipeRefreshLayout.isRefreshing = false
-        when(state) {
+        when (state) {
             is UiState.Error -> Log.e("", state.message)
             is UiState.Load -> loadPosts(state.posts)
         }
@@ -52,5 +70,13 @@ class MainActivity : AppCompatActivity() {
     private fun loadPosts(posts: List<Post>) {
         postAdapter.setItem(posts)
     }
+
+    private fun openPicture(imagePath: String) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        intent.setDataAndType(Uri.parse(imagePath), "image/*")
+        startActivity(intent)
+    }
+
 
 }

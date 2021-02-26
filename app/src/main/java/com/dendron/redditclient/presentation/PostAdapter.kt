@@ -3,6 +3,7 @@ package com.dendron.redditclient.presentation
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,7 @@ import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.util.loadImage
 import com.dendron.redditclient.util.toRelativeTime
 
-class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     private val items = mutableListOf<Post>()
 
@@ -33,13 +34,14 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = items.size
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val textViewAuthor: TextView = itemView.findViewById(R.id.textViewAuthor)
         private val textViewHours: TextView = itemView.findViewById(R.id.textViewHours)
         private val textViewTitle: TextView = itemView.findViewById(R.id.textViewTitle)
         private val textViewComments: TextView = itemView.findViewById(R.id.textViewComments)
         private val imageViewThumbnail: ImageView = itemView.findViewById(R.id.imageViewThumbnail)
+        private val buttonDismissPost: Button = itemView.findViewById(R.id.buttonDismissPost)
 
         fun setPost(post: Post) {
             imageViewThumbnail.loadImage(post.thumbnail)
@@ -51,6 +53,23 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
                 post.comments,
                 post.comments
             )
+
+            itemView.setOnClickListener { callback.onPostTapped(post) }
+            buttonDismissPost.setOnClickListener { callback.onPostDismissed(post) }
+            imageViewThumbnail.setOnClickListener {
+                post.thumbnail?.let {
+                    callback.onThumbnailTapped(
+                        post
+                    )
+                }
+            }
         }
     }
+
+    interface Callback {
+        fun onThumbnailTapped(post: Post)
+        fun onPostTapped(post: Post)
+        fun onPostDismissed(post: Post)
+    }
+
 }

@@ -23,6 +23,7 @@ private fun PostResponse.Data.Children.toDomain() = Post(
     title = data.title,
     author = data.author,
     thumbnail = data.thumbnail,
+    image = data.urlOverriddenByDest,
     comments = data.numComments,
     created = data.created
 )

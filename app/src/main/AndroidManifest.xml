@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RedditClient"
         android:name=".MainApplication"
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="false">
         <activity android:name=".presentation.MainActivity">
             <intent-filter>

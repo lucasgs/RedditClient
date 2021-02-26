@@ -10,6 +10,7 @@ data class PostEntity(
     @ColumnInfo val title: String,
     @ColumnInfo val author: String,
     @ColumnInfo val thumbnail: String?,
+    @ColumnInfo val image: String?,
     @ColumnInfo val comments: Int,
     @ColumnInfo val created: Long,
 )

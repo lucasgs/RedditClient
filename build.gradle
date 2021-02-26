@@ -35,6 +35,6 @@ ext {
     sliding_panel_version = '1.1.0'
     recycler_view_version= '1.1.0'
     swipe_refresh_version= '1.1.0'
-    glide_version = '4.12.0'
     room_version = "2.2.6"
+    picasso_version = "2.71828"
 }
