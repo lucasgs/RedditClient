@@ -5,6 +5,7 @@
     <string name="read_unread_indicator_text">Read/Unread indicator</string>
     <string name="the_image_attached_to_the_post_text">The image attached to the post</string>
     <string name="post_image_description">Post Image</string>
+    <string name="dismiss_all_text">Dismiss All</string>
 
     <plurals name="comments_number_text">
         <item quantity="one">%d comment</item>

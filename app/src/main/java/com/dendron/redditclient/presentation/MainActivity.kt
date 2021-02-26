@@ -43,17 +43,23 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.getEvents.observe(this, ::handleEvents)
 
-        binding.recycleViewPosts.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = postAdapter
-        }
-
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            fetchPosts()
-        }
-
+        bindViews()
         fetchPosts()
+    }
 
+    private fun bindViews() {
+        binding.apply {
+            recycleViewPosts.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = postAdapter
+            }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                fetchPosts()
+            }
+
+            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
+        }
     }
 
     private fun fetchPosts() {
@@ -72,6 +78,10 @@ class MainActivity : AppCompatActivity() {
             is UiState.PostRead -> {
                 postAdapter.markPostAsRead(state.post)
                 showPostDetails(state.post)
+            }
+            UiState.AllDismissed -> {
+                postAdapter.dismissAll()
+                cleanPostDetails()
             }
         }
     }

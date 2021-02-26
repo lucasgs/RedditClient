@@ -34,6 +34,11 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
         notifyDataSetChanged()
     }
 
+    fun dismissAll() {
+        items.clear()
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
@@ -46,6 +51,8 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
     }
 
     override fun getItemCount(): Int = items.size
+
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val textViewAuthor: TextView = itemView.findViewById(R.id.textViewAuthor)
