@@ -8,16 +8,18 @@ import com.dendron.redditclient.domain.model.Post
 
 class PostRepositoryImp(
     private val remoteRemoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    private val isOnlineChecker: IsOnlineChecker
 ) : PostRepository {
     override suspend fun getPosts(limit: Int): ResultWrapper<List<Post>> {
-        when(val result = remoteRemoteDataSource.getPosts(limit)) {
-            is ResultWrapper.Error -> ResultWrapper.Error(result.message)
-            is ResultWrapper.Success -> {
-                localDataSource.insertAll(result.data)
+        if (isOnlineChecker.execute()) {
+            when (val result = remoteRemoteDataSource.getPosts(limit)) {
+                is ResultWrapper.Error -> ResultWrapper.Error(result.message)
+                is ResultWrapper.Success -> {
+                    localDataSource.insertAll(result.data)
+                }
             }
         }
         return ResultWrapper.Success(localDataSource.getPosts(limit))
     }
-
 }
