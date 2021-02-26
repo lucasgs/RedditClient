@@ -8,4 +8,8 @@ data class Post(
     val image: String?,
     val comments: Int,
     val created: Long,
+    var status: Status = Status.unread
 )
+
+
+enum class Status { unread, read}

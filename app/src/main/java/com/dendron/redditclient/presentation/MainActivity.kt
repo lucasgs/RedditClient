@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostTapped(post: Post) {
-            Log.i("", "onPostTapped")
+            viewModel.markPostAsRead(post)
         }
 
         override fun onPostDismissed(post: Post) {
@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             is UiState.Error -> Log.e("", state.message)
             is UiState.Load -> loadPosts(state.posts)
             is UiState.PostDismissed -> postAdapter.setPostDeleted(state.post)
+            is UiState.PostRead -> postAdapter.markPostAsRead(state.post)
         }
     }
 

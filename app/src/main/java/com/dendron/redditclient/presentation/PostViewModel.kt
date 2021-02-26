@@ -14,6 +14,7 @@ sealed class UiState {
     data class Load(val posts: List<Post>): UiState()
     data class Error(val message: String): UiState()
     data class PostDismissed(val post: Post): UiState()
+    data class PostRead(val post: Post): UiState()
 }
 
 class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
@@ -36,5 +37,10 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
             postRepository.dismissPost(post)
             events.postValue(UiState.PostDismissed(post))
         }
+    }
+
+    fun markPostAsRead(post: Post) {
+        // TODO: 2/25/21 Add status to db
+        events.postValue(UiState.PostRead(post))
     }
 }

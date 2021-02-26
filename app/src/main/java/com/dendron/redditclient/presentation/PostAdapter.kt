@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dendron.redditclient.R
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.domain.model.Status
 import com.dendron.redditclient.util.loadImage
 import com.dendron.redditclient.util.toRelativeTime
 
@@ -24,6 +25,12 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
 
     fun setPostDeleted(post: Post) {
         items.remove(post)
+        notifyDataSetChanged()
+    }
+
+    fun markPostAsRead(post: Post) {
+        val index = items.indexOf(post)
+        items[index].status = Status.read
         notifyDataSetChanged()
     }
 
@@ -47,9 +54,12 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
         private val textViewComments: TextView = itemView.findViewById(R.id.textViewComments)
         private val imageViewThumbnail: ImageView = itemView.findViewById(R.id.imageViewThumbnail)
         private val buttonDismissPost: Button = itemView.findViewById(R.id.buttonDismissPost)
-        private val imageReadIndicator: ImageView = itemView.findViewById(R.id.imageViewReadIndicator)
+        private val imageReadIndicator: ImageView =
+            itemView.findViewById(R.id.imageViewReadIndicator)
 
         fun setPost(post: Post) {
+            imageReadIndicator.visibility =
+                if (post.status == Status.unread) View.VISIBLE else View.INVISIBLE
             imageViewThumbnail.loadImage(post.thumbnail)
             textViewAuthor.text = post.author
             textViewHours.text = post.created.toRelativeTime()
