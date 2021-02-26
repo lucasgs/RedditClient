@@ -1,5 +1,6 @@
 package com.dendron.redditclient.data
 
+import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
@@ -24,10 +25,15 @@ class PostRepositoryImpTest {
     @Mock
     private lateinit var remoteDataSource: RemoteDataSource
 
+    @Mock
+    private lateinit var localDataSource: LocalDataSource
+
+    @Mock
+    private lateinit var isOnlineChecker: IsOnlineChecker
 
     @Before
     fun setUp() {
-        repository = PostRepositoryImp(remoteDataSource)
+        repository = PostRepositoryImp(remoteDataSource, localDataSource, isOnlineChecker)
     }
 
     @After
@@ -40,15 +46,18 @@ class PostRepositoryImpTest {
         runBlockingTest {
 
             val result = ResultWrapper.Success<List<Post>>(emptyList())
+            val localResult = emptyList<Post>()
+            val expected = ResultWrapper.Success(localResult)
 
             Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
-            val expected = repository.getPosts(POST_LIMIT)
+            val actual = repository.getPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
-            assert(result == expected)
-
+            assert(actual == expected)
         }
 
     @Test
@@ -56,16 +65,18 @@ class PostRepositoryImpTest {
         runBlockingTest {
 
             val postList = mockPostList()
-
             val result = ResultWrapper.Success(postList)
+            val expected = ResultWrapper.Success(postList)
 
             Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
-            val expected = repository.getPosts(POST_LIMIT)
+            val actual = repository.getPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
-            assert(result == expected)
+            assert(actual == expected)
 
         }
 
@@ -74,16 +85,18 @@ class PostRepositoryImpTest {
         runBlockingTest {
 
             val postList = mockPostList().subList(0, POST_LIMIT)
-
             val result = ResultWrapper.Success(postList)
+            val expected = ResultWrapper.Success(postList)
 
             Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
-            val expected = repository.getPosts(POST_LIMIT)
+            val actual = repository.getPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
-            assert(result == expected)
+            assert(actual == expected)
 
         }
 
@@ -92,23 +105,103 @@ class PostRepositoryImpTest {
         runBlockingTest {
             val message = "ERROR"
             val result = ResultWrapper.Error(message)
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            val localResult = emptyList<Post>()
+            val expected = ResultWrapper.Success(localResult)
 
-            val expected = repository.getPosts(POST_LIMIT)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
+
+            val actual = repository.getPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
-            assert(result == expected)
+            assert(actual == expected)
         }
 
 
-    private fun mockPostList() = listOf<Post>(
-       Post(id = "1", title = "title1", author = "author1", thumbnail = "thumb1", comments = 1, created = 1 ),
-       Post(id = "2", title = "title2", author = "author2", thumbnail = "thumb2", comments = 2, created = 2 ),
-       Post(id = "3", title = "title3", author = "author3", thumbnail = "thumb3", comments = 3, created = 3 ),
+    @Test
+    fun `Given a call to getPost, device is online, should call the remote data source`() =
+        runBlockingTest {
+
+            val result = ResultWrapper.Success<List<Post>>(emptyList())
+            val localResult = emptyList<Post>()
+
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
+
+            repository.getPosts(POST_LIMIT)
+
+            Mockito.verify(localDataSource, times(1)).insertAll(emptyList())
+            Mockito.verify(localDataSource, times(1)).getPosts(POST_LIMIT)
+            Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
+        }
+
+
+    @Test
+    fun `Given a call to getPost, device is offline, should call the remote data source`() =
+        runBlockingTest {
+
+            val localResult = emptyList<Post>()
+
+            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
+            Mockito.`when`(isOnlineChecker.execute()).thenReturn(false)
+
+            repository.getPosts(POST_LIMIT)
+
+            Mockito.verify(localDataSource, times(0)).insertAll(emptyList())
+            Mockito.verify(localDataSource, times(1)).getPosts(POST_LIMIT)
+            Mockito.verify(remoteDataSource, times(0)).getPosts(POST_LIMIT)
+        }
+
+
+    @Test
+    fun `Given a call to dismissPost, should call the local data source`() =
+        runBlockingTest {
+            val post = mockPostList().first()
+            repository.dismissPost(post)
+            Mockito.verify(localDataSource, times(1)).delete(post)
+        }
+
+    @Test
+    fun `Given a call to dismissAll, should call the local data source`() =
+        runBlockingTest {
+            repository.dismissAll()
+            Mockito.verify(localDataSource, times(1)).deleteAll()
+        }
+
+    private fun mockPostList() = listOf(
+        Post(
+            id = "1",
+            title = "title1",
+            author = "author1",
+            thumbnail = "thumb1",
+            comments = 1,
+            created = 1,
+            image = "image1"
+        ),
+        Post(
+            id = "2",
+            title = "title2",
+            author = "author2",
+            thumbnail = "thumb2",
+            comments = 2,
+            created = 2,
+            image = "image2"
+        ),
+        Post(
+            id = "3",
+            title = "title3",
+            author = "author3",
+            thumbnail = "thumb3",
+            comments = 3,
+            created = 3,
+            image = "image3"
+        ),
     )
 
     companion object {
-        const val POST_LIMIT = 2;
+        const val POST_LIMIT = 2
     }
 }
