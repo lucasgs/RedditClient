@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dendron.redditclient.databinding.ActivityMainBinding
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.util.loadImage
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -65,7 +66,18 @@ class MainActivity : AppCompatActivity() {
             is UiState.Error -> Log.e("", state.message)
             is UiState.Load -> loadPosts(state.posts)
             is UiState.PostDismissed -> postAdapter.setPostDeleted(state.post)
-            is UiState.PostRead -> postAdapter.markPostAsRead(state.post)
+            is UiState.PostRead -> {
+                postAdapter.markPostAsRead(state.post)
+                showPostDetails(state.post)
+            }
+        }
+    }
+
+    private fun showPostDetails(post: Post) {
+        binding.apply {
+            textViewAuthor.text = post.author
+            imageViewImage.loadImage(post.image)
+            textViewTitle.text = post.title
         }
     }
 
