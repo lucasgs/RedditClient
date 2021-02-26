@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostDismissed(post: Post) {
-            Log.i("", "onPostDismissed")
+            viewModel.dismissPost(post)
         }
     }
 
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             is UiState.Error -> Log.e("", state.message)
             is UiState.Load -> loadPosts(state.posts)
+            is UiState.PostDismissed -> postAdapter.setPostDeleted(state.post)
         }
     }
 

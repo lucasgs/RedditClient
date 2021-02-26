@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Reddit Client</string>
-    <string name="dismiss_post_title">Button</string>
+    <string name="dismiss_post_title">Dismiss Post</string>
     <string name="display_post_text">Display post</string>
     <string name="read_unread_indicator_text">Read/Unread indicator</string>
     <string name="the_image_attached_to_the_post_text">The image attached to the post</string>

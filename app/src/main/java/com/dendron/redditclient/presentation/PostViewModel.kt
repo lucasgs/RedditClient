@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 sealed class UiState {
     data class Load(val posts: List<Post>): UiState()
     data class Error(val message: String): UiState()
+    data class PostDismissed(val post: Post): UiState()
 }
 
 class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
@@ -27,6 +28,13 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
                 is ResultWrapper.Error -> events.postValue(UiState.Error(result.message))
                 is ResultWrapper.Success -> events.postValue(UiState.Load(result.data))
             }
+        }
+    }
+
+    fun dismissPost(post: Post) {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRepository.dismissPost(post)
+            events.postValue(UiState.PostDismissed(post))
         }
     }
 }

@@ -22,6 +22,11 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
         notifyDataSetChanged()
     }
 
+    fun setPostDeleted(post: Post) {
+        items.remove(post)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
@@ -42,6 +47,7 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
         private val textViewComments: TextView = itemView.findViewById(R.id.textViewComments)
         private val imageViewThumbnail: ImageView = itemView.findViewById(R.id.imageViewThumbnail)
         private val buttonDismissPost: Button = itemView.findViewById(R.id.buttonDismissPost)
+        private val imageReadIndicator: ImageView = itemView.findViewById(R.id.imageViewReadIndicator)
 
         fun setPost(post: Post) {
             imageViewThumbnail.loadImage(post.thumbnail)
@@ -54,7 +60,9 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
                 post.comments
             )
 
-            itemView.setOnClickListener { callback.onPostTapped(post) }
+            itemView.setOnClickListener {
+                callback.onPostTapped(post)
+            }
             buttonDismissPost.setOnClickListener { callback.onPostDismissed(post) }
             imageViewThumbnail.setOnClickListener {
                 post.thumbnail?.let {

@@ -22,4 +22,9 @@ class PostRepositoryImp(
         }
         return ResultWrapper.Success(localDataSource.getPosts(limit))
     }
+
+    override suspend fun dismissPost(post: Post) {
+        localDataSource.delete(post)
+    }
+
 }
