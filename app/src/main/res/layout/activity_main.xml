@@ -63,6 +63,7 @@
             style="@style/BigBlackFont"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,8 +72,10 @@
 
         <ImageView
             android:id="@+id/imageViewImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/post_image_description"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,8 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="204dp" />
-
+            app:layout_constraintGuide_begin="278dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

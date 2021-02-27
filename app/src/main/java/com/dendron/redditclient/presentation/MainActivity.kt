@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostTapped(post: Post) {
+            binding.slidingPanel.closePane()
             showPostDetails(post)
             viewModel.markPostAsRead(post)
         }
