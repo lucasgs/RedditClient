@@ -3,7 +3,6 @@ package com.dendron.redditclient.presentation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostTapped(post: Post) {
+            showPostDetails(post)
             viewModel.markPostAsRead(post)
         }
 
@@ -43,80 +43,32 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
 
+            recycleViewPosts.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = postAdapter
+            }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                fetchPosts()
+            }
+
+            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
+
             lifecycleScope.collectFlow(viewModel.posts) { posts ->
                 loadPosts(posts)
             }
 
-            lifecycleScope.collectFlow(viewModel.events) { event ->
-
-                handleEvents(event)
-
+            lifecycleScope.collectFlow(viewModel.spinner) { enable ->
+                swipeRefreshLayout.isRefreshing = enable
             }
 
-            recycleViewPosts.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = postAdapter
-            }
-
-            swipeRefreshLayout.setOnRefreshListener {
-                fetchPosts()
-            }
-
-            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
         }
 
-        //setContentView(binding.root)
-        //bindViewModels()
-        //bindViews()
         fetchPosts()
-    }
-
-    private fun bindViewModels() {
-        //viewModel.getEvents.observe(this, ::handleEvents)
-        //viewModel.posts.observe(this, {
-        //    binding.swipeRefreshLayout.isRefreshing = false
-        //    loadPosts(it)
-        //})
-    }
-
-    private fun bindViews() {
-        binding.apply {
-            recycleViewPosts.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = postAdapter
-            }
-
-            swipeRefreshLayout.setOnRefreshListener {
-                fetchPosts()
-            }
-
-            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
-        }
     }
 
     private fun fetchPosts() {
         viewModel.refreshPosts()
-    }
-
-    private fun handleEvents(event: UiState) {
-        binding.swipeRefreshLayout.isRefreshing = false
-
-        when (event) {
-            is UiState.LoadingFinished -> binding.swipeRefreshLayout.isRefreshing = false
-            is UiState.Error -> Log.e(TAG, event.message)
-            is UiState.PostDismissed -> {
-                postAdapter.setPostDeleted(event.post)
-                cleanPostDetails()
-            }
-            is UiState.PostRead -> {
-                postAdapter.markPostAsRead(event.post)
-                showPostDetails(event.post)
-            }
-            UiState.AllDismissed -> {
-                postAdapter.dismissAll()
-                cleanPostDetails()
-            }
-        }
     }
 
     private fun cleanPostDetails() {

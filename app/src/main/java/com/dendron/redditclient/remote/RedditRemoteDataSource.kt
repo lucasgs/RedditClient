@@ -3,6 +3,7 @@ package com.dendron.redditclient.remote
 import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.ApiResult
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.domain.model.Status
 import com.dendron.redditclient.remote.model.PostResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,5 +33,6 @@ private fun PostResponse.Data.Children.toDomain() = Post(
     thumbnail = data.thumbnail,
     image = data.urlOverriddenByDest,
     comments = data.numComments,
-    created = data.created
+    created = data.created,
+    status = Status.unread
 )

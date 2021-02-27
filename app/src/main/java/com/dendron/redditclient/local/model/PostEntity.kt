@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Post")
+@Entity(tableName = "post")
 data class PostEntity(
     @PrimaryKey val id: String,
     @ColumnInfo val title: String,
@@ -13,4 +13,5 @@ data class PostEntity(
     @ColumnInfo val image: String?,
     @ColumnInfo val comments: Int,
     @ColumnInfo val created: Long,
+    @ColumnInfo val status: Int = 0
 )

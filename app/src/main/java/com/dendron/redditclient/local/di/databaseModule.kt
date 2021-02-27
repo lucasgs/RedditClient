@@ -2,7 +2,7 @@ package com.dendron.redditclient.local.di
 
 import androidx.room.Room
 import com.dendron.redditclient.data.datasource.LocalDataSource
-import com.dendron.redditclient.local.AppDatabase
+import com.dendron.redditclient.local.db.AppDatabase
 import com.dendron.redditclient.local.LocalDataSourceImp
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module

@@ -9,8 +9,10 @@ interface LocalDataSource {
 
     suspend fun insertAll(posts: List<Post>)
 
-    suspend fun delete(post: Post)
+    suspend fun markPostAsRead(post: Post)
 
-    suspend fun deleteAll()
+    suspend fun dismissPost(post: Post)
+
+    suspend fun dismissAll()
 
 }

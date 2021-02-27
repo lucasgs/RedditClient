@@ -6,19 +6,15 @@ import com.dendron.redditclient.domain.ApiResult
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 
 class PostRepositoryImp(
     private val remoteRemoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
-    private val isOnlineChecker: IsOnlineChecker,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val isOnlineChecker: IsOnlineChecker
 ) : PostRepository {
 
-    override fun getPosts(): Flow<List<Post>> = localDataSource.getPosts(10).flowOn(dispatcher)
+    override fun getPosts(): Flow<List<Post>> = localDataSource.getPosts(10)
 
     override suspend fun refreshPosts(limit: Int): ResultWrapper<List<Post>> =
         if (isOnlineChecker.execute()) {
@@ -31,12 +27,16 @@ class PostRepositoryImp(
             }
         } else ResultWrapper.Success
 
+    override suspend fun markPostAsRead(post: Post) {
+        localDataSource.markPostAsRead(post)
+    }
+
     override suspend fun dismissPost(post: Post) {
-        localDataSource.delete(post)
+        localDataSource.dismissPost(post)
     }
 
     override suspend fun dismissAll() {
-        localDataSource.deleteAll()
+        localDataSource.dismissAll()
     }
 
 }
