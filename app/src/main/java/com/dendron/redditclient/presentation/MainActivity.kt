@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
             recycleViewPosts.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = postAdapter
+                setHasFixedSize(true)
             }
 
             swipeRefreshLayout.setOnRefreshListener {
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadPosts(posts: List<Post>) {
-        postAdapter.setItem(posts)
+        postAdapter.submitList(posts)
     }
 
     private fun openPicture(imagePath: String) {
