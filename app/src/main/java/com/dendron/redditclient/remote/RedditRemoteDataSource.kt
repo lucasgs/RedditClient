@@ -10,12 +10,13 @@ import kotlinx.coroutines.withContext
 
 class RedditRemoteDataSource(private val redditApi: RedditApi) : RemoteDataSource {
 
-    override suspend fun getPosts(limit: Int): ApiResult<List<Post>> =
+    override suspend fun fetchMorePosts(limit: Int, after: String): ApiResult =
         withContext(Dispatchers.IO) {
             try {
-                val response = redditApi.getPost(limit)
+                val response = redditApi.fetchMorePost(limit, after)
                 if (response.isSuccessful) {
-                    ApiResult.Success(response.body()?.data?.children?.map { it.toDomain() }
+                    val body = response.body()
+                    ApiResult.Success(body?.data?.after, body?.data?.children?.map { it.toDomain() }
                         ?: emptyList())
                 } else {
                     ApiResult.Error(response.errorBody()?.toString() ?: "")
@@ -23,16 +24,17 @@ class RedditRemoteDataSource(private val redditApi: RedditApi) : RemoteDataSourc
             } catch (ex: Exception) {
                 ApiResult.Error(ex.message.toString())
             }
-        }
-}
 
-private fun PostResponse.Data.Children.toDomain() = Post(
-    id = data.id,
-    title = data.title,
-    author = data.author,
-    thumbnail = data.thumbnail,
-    image = data.urlOverriddenByDest,
-    comments = data.numComments,
-    created = data.created,
-    status = Status.unread
-)
+        }
+
+    private fun PostResponse.Data.Children.toDomain() = Post(
+        id = data.id,
+        title = data.title,
+        author = data.author,
+        thumbnail = data.thumbnail,
+        image = data.urlOverriddenByDest,
+        comments = data.numComments,
+        created = data.created,
+        status = Status.unread
+    )
+}

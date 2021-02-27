@@ -16,16 +16,16 @@ class PostRepositoryImp(
 
     override fun getPosts(): Flow<List<Post>> = localDataSource.getPosts(10)
 
-    override suspend fun refreshPosts(limit: Int): ResultWrapper<List<Post>> =
+    override suspend fun fetchMorePosts(limit: Int, after: String): ResultWrapper =
         if (isOnlineChecker.execute()) {
-            when (val result = remoteRemoteDataSource.getPosts(limit)) {
+            when (val result = remoteRemoteDataSource.fetchMorePosts(limit, after)) {
                 is ApiResult.Error -> ResultWrapper.Error(result.message)
                 is ApiResult.Success -> {
                     localDataSource.insertAll(result.data)
-                    ResultWrapper.Success
+                    ResultWrapper.Success(result.after)
                 }
             }
-        } else ResultWrapper.Success
+        } else ResultWrapper.Success()
 
     override suspend fun markPostAsRead(post: Post) {
         localDataSource.markPostAsRead(post)

@@ -5,8 +5,15 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+object Api {
+    const val Top = "/r/all/top.json"
+}
+
 interface RedditApi {
 
-    @GET("/r/all/top.json")
-    suspend fun getPost(@Query("limit") limit: Int): Response<PostResponse>
+    @GET(Api.Top)
+    suspend fun fetchMorePost(
+        @Query("limit") limit: Int,
+        @Query("after") after: String
+    ): Response<PostResponse>
 }

@@ -1,6 +1,6 @@
 package com.dendron.redditclient.domain
 
-sealed class ResultWrapper<out T> {
-    object Success : ResultWrapper<Nothing>()
-    data class Error(val message: String) : ResultWrapper<Nothing>()
+sealed class ResultWrapper {
+    data class Success(val nextPage: String? = null) : ResultWrapper()
+    data class Error(val message: String) : ResultWrapper()
 }

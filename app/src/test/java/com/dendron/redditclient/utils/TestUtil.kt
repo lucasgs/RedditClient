@@ -3,8 +3,6 @@ package com.dendron.redditclient.utils
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.domain.model.Status
 
-const val POST_LIMIT = 2
-
 fun mockPostList() = listOf(
     Post(
         id = "1",

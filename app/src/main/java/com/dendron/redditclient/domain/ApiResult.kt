@@ -1,6 +1,8 @@
 package com.dendron.redditclient.domain
 
-sealed class ApiResult<out T> {
-    data class Success<out T>(val data: T) : ApiResult<T>()
-    data class Error(val message: String) : ApiResult<Nothing>()
+import com.dendron.redditclient.domain.model.Post
+
+sealed class ApiResult {
+    data class Success(val after: String?, val data: List<Post>) : ApiResult()
+    data class Error(val message: String) : ApiResult()
 }
