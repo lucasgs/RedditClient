@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dendron.redditclient.databinding.ActivityMainBinding
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.util.collectFlow
 import com.dendron.redditclient.util.loadImage
 import org.koin.android.ext.android.inject
 
@@ -17,9 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private val postAdapter by lazy { PostAdapter(callback) }
 
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
+    private lateinit var binding: ActivityMainBinding
 
     private val callback = object : PostAdapter.Callback {
         override fun onThumbnailTapped(post: Post) {
@@ -39,12 +39,44 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
 
-        viewModel.getEvents.observe(this, ::handleEvents)
+        binding = ActivityMainBinding.inflate(layoutInflater).apply {
+            setContentView(root)
 
-        bindViews()
+            lifecycleScope.collectFlow(viewModel.posts) { posts ->
+                loadPosts(posts)
+            }
+
+            lifecycleScope.collectFlow(viewModel.events) { event ->
+
+                handleEvents(event)
+
+            }
+
+            recycleViewPosts.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = postAdapter
+            }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                fetchPosts()
+            }
+
+            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
+        }
+
+        //setContentView(binding.root)
+        //bindViewModels()
+        //bindViews()
         fetchPosts()
+    }
+
+    private fun bindViewModels() {
+        //viewModel.getEvents.observe(this, ::handleEvents)
+        //viewModel.posts.observe(this, {
+        //    binding.swipeRefreshLayout.isRefreshing = false
+        //    loadPosts(it)
+        //})
     }
 
     private fun bindViews() {
@@ -63,21 +95,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
-        viewModel.getPosts()
+        viewModel.refreshPosts()
     }
 
-    private fun handleEvents(state: UiState) {
+    private fun handleEvents(event: UiState) {
         binding.swipeRefreshLayout.isRefreshing = false
-        when (state) {
-            is UiState.Error -> Log.e("", state.message)
-            is UiState.Load -> loadPosts(state.posts)
+
+        when (event) {
+            is UiState.LoadingFinished -> binding.swipeRefreshLayout.isRefreshing = false
+            is UiState.Error -> Log.e(TAG, event.message)
             is UiState.PostDismissed -> {
-                postAdapter.setPostDeleted(state.post)
+                postAdapter.setPostDeleted(event.post)
                 cleanPostDetails()
             }
             is UiState.PostRead -> {
-                postAdapter.markPostAsRead(state.post)
-                showPostDetails(state.post)
+                postAdapter.markPostAsRead(event.post)
+                showPostDetails(event.post)
             }
             UiState.AllDismissed -> {
                 postAdapter.dismissAll()
@@ -113,5 +146,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
+    companion object {
+        val TAG = ::MainActivity.name
+    }
 }

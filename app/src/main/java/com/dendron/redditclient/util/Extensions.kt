@@ -3,6 +3,10 @@ package com.dendron.redditclient.util
 import android.widget.ImageView
 import com.dendron.redditclient.R
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 private const val SECOND_MILLIS = 1000
 private const val MINUTE_MILLIS = 60 * SECOND_MILLIS
@@ -17,6 +21,11 @@ fun ImageView.loadImage(url: String?) {
         .error(R.drawable.ic_no_image)
         .placeholder(R.drawable.ic_no_image)
         .into(this)
+}
+
+fun <T> CoroutineScope.collectFlow(flow: Flow<T>, body: suspend (T) -> Unit) {
+    flow.onEach { body(it) }
+        .launchIn(this)
 }
 
 fun Long.toRelativeTime(): String {

@@ -1,53 +1,52 @@
 package com.dendron.redditclient.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dendron.redditclient.domain.PostRepository
-import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 sealed class UiState {
-    data class Load(val posts: List<Post>) : UiState()
     data class Error(val message: String) : UiState()
     data class PostDismissed(val post: Post) : UiState()
     data class PostRead(val post: Post) : UiState()
     object AllDismissed : UiState()
+    object LoadingFinished : UiState()
 }
 
 class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
+    val posts: Flow<List<Post>> get() = postRepository.getPosts()
 
-    private var events = MutableLiveData<UiState>()
-    val getEvents: LiveData<UiState> = events
+    private val _events = MutableSharedFlow<UiState>()
+    val events: SharedFlow<UiState> get() = _events
 
-    fun getPosts(limit: Int = 10) {
+    fun refreshPosts(limit: Int = 10) {
         viewModelScope.launch {
-            when (val result = postRepository.getPosts(limit)) {
-                is ResultWrapper.Error -> events.postValue(UiState.Error(result.message))
-                is ResultWrapper.Success -> events.postValue(UiState.Load(result.data))
-            }
+            postRepository.refreshPosts(limit)
+            _events.emit(UiState.LoadingFinished)
         }
     }
 
     fun dismissPost(post: Post) {
         viewModelScope.launch {
             postRepository.dismissPost(post)
-            events.postValue(UiState.PostDismissed(post))
+            _events.emit(UiState.PostDismissed(post))
         }
     }
 
     fun markPostAsRead(post: Post) {
-        // TODO: 2/25/21 Add status to db
-        events.postValue(UiState.PostRead(post))
+        viewModelScope.launch {
+            _events.emit(UiState.PostRead(post))
+        }
     }
 
     fun dismissAll() {
         viewModelScope.launch {
             postRepository.dismissAll()
-            events.postValue(UiState.AllDismissed)
+            _events.emit(UiState.AllDismissed)
         }
     }
 }

@@ -4,31 +4,29 @@ import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.local.model.PostEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class LocalDataSourceImp(private val appDatabase: AppDatabase) : LocalDataSource {
 
-    override suspend fun getPosts(limit: Int): List<Post> {
-        return appDatabase.userDao().getAll().map { it.toDomain() }
-    }
+    override fun getPosts(limit: Int): Flow<List<Post>> =
+        appDatabase.userDao().getAll().map { posts -> posts.map { it.toDomain() } }
 
-    override suspend fun insertAll(posts: List<Post>) {
+    override suspend fun insertAll(posts: List<Post>) =
         withContext(Dispatchers.IO) {
             appDatabase.userDao().insertAll(posts.map { it.toModel() })
         }
-    }
 
-    override suspend fun delete(post: Post) {
+    override suspend fun delete(post: Post) =
         withContext(Dispatchers.IO) {
             appDatabase.userDao().delete(post.toModel())
         }
-    }
 
-    override suspend fun deleteAll() {
+    override suspend fun deleteAll() =
         withContext(Dispatchers.IO) {
             appDatabase.userDao().deleteAll()
         }
-    }
 }
 
 private fun Post.toModel() = PostEntity(

@@ -3,6 +3,7 @@ package com.dendron.redditclient.data
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.data.datasource.RemoteDataSource
+import com.dendron.redditclient.domain.ApiResult
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
@@ -54,18 +55,16 @@ class PostRepositoryImpTest {
     }
 
     @Test
-    fun `Given a call to getPost, empty list, should call the remote data source`() =
+    fun `Given a call to refreshPosts, empty list, should call the remote data source`() =
         runBlockingTest {
 
-            val result = ResultWrapper.Success<List<Post>>(emptyList())
-            val localResult = emptyList<Post>()
-            val expected = ResultWrapper.Success(localResult)
+            val result = ApiResult.Success<List<Post>>(emptyList())
+            val expected = ResultWrapper.Success
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
 
-            val actual = repository.getPosts(POST_LIMIT)
+            val actual = repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
@@ -73,18 +72,18 @@ class PostRepositoryImpTest {
         }
 
     @Test
-    fun `Given a call to getPost, list with items, should call the remote data source`() =
+    fun `Given a call to refreshPosts, list with items, should call the remote data source`() =
         runBlockingTest {
 
             val postList = mockPostList()
-            val result = ResultWrapper.Success(postList)
-            val expected = ResultWrapper.Success(postList)
+            val result = ApiResult.Success(postList)
+            val expected = ResultWrapper.Success
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
+            //Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(postList))
 
-            val actual = repository.getPosts(POST_LIMIT)
+            val actual = repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
@@ -93,18 +92,17 @@ class PostRepositoryImpTest {
         }
 
     @Test
-    fun `Given a call to getPost, list with items and a limit, should call the remote data source`() =
+    fun `Given a call to refreshPosts, list with items and a limit, should call the remote data source`() =
         runBlockingTest {
 
             val postList = mockPostList().subList(0, POST_LIMIT)
-            val result = ResultWrapper.Success(postList)
-            val expected = ResultWrapper.Success(postList)
+            val result = ApiResult.Success(postList)
+            val expected = ResultWrapper.Success
 
             Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
-            val actual = repository.getPosts(POST_LIMIT)
+            val actual = repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
@@ -113,18 +111,16 @@ class PostRepositoryImpTest {
         }
 
     @Test
-    fun `Given a call to getPost, an error occur, should call the remote data source`() =
+    fun `Given a call to refreshPosts, an error occur, should call the remote data source`() =
         runBlockingTest {
             val message = "ERROR"
-            val result = ResultWrapper.Error(message)
-            val localResult = emptyList<Post>()
-            val expected = ResultWrapper.Success(localResult)
+            val result = ApiResult.Error(message)
+            val expected = ResultWrapper.Error(message)
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
 
-            val actual = repository.getPosts(POST_LIMIT)
+            val actual = repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
 
@@ -133,37 +129,30 @@ class PostRepositoryImpTest {
 
 
     @Test
-    fun `Given a call to getPost, device is online, should call the remote data source`() =
+    fun `Given a call to refreshPosts, device is online, should call the remote data source`() =
         runBlockingTest {
 
-            val result = ResultWrapper.Success<List<Post>>(emptyList())
-            val localResult = emptyList<Post>()
+            val result = ApiResult.Success<List<Post>>(emptyList())
 
             Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
-            repository.getPosts(POST_LIMIT)
+            repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(localDataSource, times(1)).insertAll(emptyList())
-            Mockito.verify(localDataSource, times(1)).getPosts(POST_LIMIT)
             Mockito.verify(remoteDataSource, times(1)).getPosts(POST_LIMIT)
         }
 
 
     @Test
-    fun `Given a call to getPost, device is offline, should call the remote data source`() =
+    fun `Given a call to refreshPosts, device is offline, should not call the remote data source`() =
         runBlockingTest {
 
-            val localResult = emptyList<Post>()
-
-            Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(false)
 
-            repository.getPosts(POST_LIMIT)
+            repository.refreshPosts(POST_LIMIT)
 
             Mockito.verify(localDataSource, times(0)).insertAll(emptyList())
-            Mockito.verify(localDataSource, times(1)).getPosts(POST_LIMIT)
             Mockito.verify(remoteDataSource, times(0)).getPosts(POST_LIMIT)
         }
 

@@ -2,12 +2,13 @@ package com.dendron.redditclient.local
 
 import androidx.room.*
 import com.dendron.redditclient.local.model.PostEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
 
     @Query("SELECT * from Post")
-    suspend fun getAll(): List<PostEntity>
+    fun getAll(): Flow<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(posts: List<PostEntity>)
