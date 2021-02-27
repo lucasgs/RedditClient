@@ -20,23 +20,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val callback = object : PostAdapter.Callback {
-        override fun onThumbnailTapped(post: Post) {
-            post.image?.let { image ->
-                openPicture(image)
-            }
-        }
-
-        override fun onPostTapped(post: Post) {
-            showPostDetails(post)
-            viewModel.markPostAsRead(post)
-        }
-
-        override fun onPostDismissed(post: Post) {
-            viewModel.dismissPost(post)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.collectFlow(viewModel.spinner) { enable ->
                 swipeRefreshLayout.isRefreshing = enable
             }
+
+            slidingPanel.openPane()
 
         }
 
@@ -98,7 +83,21 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    companion object {
-        val TAG = ::MainActivity.name
+    private val callback = object : PostAdapter.Callback {
+        override fun onThumbnailTapped(post: Post) {
+            post.image?.let { image ->
+                openPicture(image)
+            }
+        }
+
+        override fun onPostTapped(post: Post) {
+            showPostDetails(post)
+            viewModel.markPostAsRead(post)
+        }
+
+        override fun onPostDismissed(post: Post) {
+            cleanPostDetails()
+            viewModel.dismissPost(post)
+        }
     }
 }

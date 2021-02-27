@@ -76,6 +76,7 @@
     <Button
         android:id="@+id/buttonDismissPost"
         style="@style/SmallWhiteFont"
+        android:backgroundTint="@color/black"
         android:textAllCaps="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

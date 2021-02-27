@@ -15,7 +15,7 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     private val _spinner = MutableStateFlow(true)
     val spinner: StateFlow<Boolean> get() = _spinner
 
-    fun refreshPosts(limit: Int = 10) {
+    fun refreshPosts(limit: Int = POST_LIMIT) {
         viewModelScope.launch {
             _spinner.value = true
             postRepository.refreshPosts(limit)
@@ -40,4 +40,9 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
             postRepository.dismissAll()
         }
     }
+
+    companion object {
+        const val POST_LIMIT = 50
+    }
+
 }

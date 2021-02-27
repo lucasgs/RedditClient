@@ -23,24 +23,6 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
         notifyDataSetChanged()
     }
 
-    fun setPostDeleted(post: Post) {
-        val index = items.indexOf(post)
-        items.remove(post)
-        notifyItemRemoved(index)
-    }
-
-    fun markPostAsRead(post: Post) {
-        val index = items.indexOf(post)
-        items[index].status = Status.read
-        notifyItemChanged(index)
-    }
-
-    fun dismissAll() {
-        val count = items.size
-        items.clear()
-        notifyItemRangeRemoved(0, count)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
@@ -53,7 +35,6 @@ class PostAdapter(private val callback: Callback) : RecyclerView.Adapter<PostAda
     }
 
     override fun getItemCount(): Int = items.size
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
