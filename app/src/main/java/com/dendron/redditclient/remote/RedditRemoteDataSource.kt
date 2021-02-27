@@ -4,22 +4,26 @@ import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.remote.model.PostResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class RedditRemoteDataSource(private val redditApi: RedditApi) : RemoteDataSource {
 
-    override suspend fun getPosts(limit: Int): ResultWrapper<List<Post>> {
-        return try {
+    override suspend fun getPosts(limit: Int): Flow<ResultWrapper<List<Post>>> = flow {
+        try {
             val response = redditApi.getPost(limit)
-            return if (response.isSuccessful) {
-                ResultWrapper.Success(response.body()?.data?.children?.map { it.toDomain() }
-                    ?: emptyList())
+            if (response.isSuccessful) {
+                emit(ResultWrapper.Success(response.body()?.data?.children?.map { it.toDomain() }
+                    ?: emptyList()))
             } else {
-                ResultWrapper.Error(response.errorBody()?.toString() ?: "")
+                emit(ResultWrapper.Error(response.errorBody()?.toString() ?: ""))
             }
         } catch (ex: Exception) {
-            ResultWrapper.Error(ex.message.toString())
+            emit(ResultWrapper.Error(ex.message.toString()))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 private fun PostResponse.Data.Children.toDomain() = Post(

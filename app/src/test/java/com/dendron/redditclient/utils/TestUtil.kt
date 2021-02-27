@@ -1,4 +1,4 @@
-package com.dendron.redditclient
+package com.dendron.redditclient.utils
 
 import com.dendron.redditclient.domain.model.Post
 

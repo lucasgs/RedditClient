@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dendron.hackernews
+package com.dendron.redditclient.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

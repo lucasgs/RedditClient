@@ -3,6 +3,8 @@ package com.dendron.redditclient.local
 import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.local.model.PostEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class LocalDataSourceImp(private val appDatabase: AppDatabase) : LocalDataSource {
 
@@ -11,15 +13,21 @@ class LocalDataSourceImp(private val appDatabase: AppDatabase) : LocalDataSource
     }
 
     override suspend fun insertAll(posts: List<Post>) {
-        appDatabase.userDao().insertAll(posts.map { it.toModel() })
+        withContext(Dispatchers.IO) {
+            appDatabase.userDao().insertAll(posts.map { it.toModel() })
+        }
     }
 
     override suspend fun delete(post: Post) {
-        appDatabase.userDao().delete(post.toModel())
+        withContext(Dispatchers.IO) {
+            appDatabase.userDao().delete(post.toModel())
+        }
     }
 
     override suspend fun deleteAll() {
-        appDatabase.userDao().deleteAll()
+        withContext(Dispatchers.IO) {
+            appDatabase.userDao().deleteAll()
+        }
     }
 }
 

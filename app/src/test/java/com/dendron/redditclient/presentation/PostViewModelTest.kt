@@ -2,12 +2,12 @@ package com.dendron.redditclient.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.dendron.hackernews.MainCoroutineScopeRule
-import com.dendron.redditclient.POST_LIMIT
+import com.dendron.redditclient.utils.MainCoroutineScopeRule
+import com.dendron.redditclient.utils.POST_LIMIT
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
-import com.dendron.redditclient.mockPostList
+import com.dendron.redditclient.utils.mockPostList
 import com.nhaarman.mockitokotlin2.times
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
