@@ -32,10 +32,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             swipeRefreshLayout.setOnRefreshListener {
-                fetchPosts()
+                viewModel.refreshPosts()
             }
 
-            buttonDismissAll.setOnClickListener { viewModel.dismissAll() }
+            buttonDismissAll.setOnClickListener {
+                cleanPostDetails()
+                viewModel.dismissAll()
+            }
 
             lifecycleScope.collectFlow(viewModel.posts) { posts ->
                 loadPosts(posts)
@@ -48,12 +51,6 @@ class MainActivity : AppCompatActivity() {
             slidingPanel.openPane()
 
         }
-
-        fetchPosts()
-    }
-
-    private fun fetchPosts() {
-        viewModel.refreshPosts()
     }
 
     private fun cleanPostDetails() {

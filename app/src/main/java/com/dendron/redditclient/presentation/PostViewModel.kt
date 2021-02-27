@@ -15,6 +15,10 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     private val _spinner = MutableStateFlow(true)
     val spinner: StateFlow<Boolean> get() = _spinner
 
+    init {
+        refreshPosts()
+    }
+
     fun refreshPosts(limit: Int = POST_LIMIT) {
         viewModelScope.launch {
             _spinner.value = true
