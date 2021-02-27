@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 sealed class UiState {
@@ -21,8 +19,8 @@ sealed class UiState {
 class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     val posts: Flow<List<Post>> get() = postRepository.getPosts()
 
-    private val _events = MutableSharedFlow<UiState>()
-    val events: SharedFlow<UiState> get() = _events
+    private val _events = MutableStateFlow<UiState>(UiState.LoadingFinished)
+    val events: StateFlow<UiState> get() = _events
 
     fun refreshPosts(limit: Int = 10) {
         viewModelScope.launch {

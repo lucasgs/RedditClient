@@ -1,5 +1,6 @@
 package com.dendron.redditclient.presentation
 
+import app.cash.turbine.test
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
@@ -7,7 +8,6 @@ import com.dendron.redditclient.utils.MainCoroutineScopeRule
 import com.dendron.redditclient.utils.POST_LIMIT
 import com.dendron.redditclient.utils.mockPostList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -18,7 +18,9 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class PostViewModelTest {
@@ -38,16 +40,47 @@ class PostViewModelTest {
 
     @Test
     fun `Given a call to refreshPosts, empty list, should call the repository and emit empty list`() =
-        runBlockingTest {
+        coroutineScope.dispatcher.runBlockingTest {
 
             val expected = emptyList<Post>()
 
             Mockito.`when`(postRepository.getPosts()).thenReturn(flowOf(emptyList()))
+            Mockito.`when`(postRepository.refreshPosts(POST_LIMIT))
+                .thenReturn(ResultWrapper.Success)
 
             viewModel.refreshPosts(POST_LIMIT)
 
-            viewModel.posts.collect { posts ->
-                assert(posts == expected)
+            viewModel.posts.test {
+                assert(expectItem() == expected)
+                expectComplete()
+            }
+
+            viewModel.events.test {
+                assert(expectItem() == UiState.LoadingFinished)
+            }
+
+            Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
+        }
+
+    @Test
+    fun `Given a call to refreshPosts, items, should call the repository and emit the items`() =
+        runBlockingTest {
+
+            val list = mockPostList()
+
+            Mockito.`when`(postRepository.getPosts()).thenReturn(flowOf(list))
+            Mockito.`when`(postRepository.refreshPosts(POST_LIMIT))
+                .thenReturn(ResultWrapper.Success)
+
+            viewModel.refreshPosts(POST_LIMIT)
+
+            viewModel.posts.test {
+                assert(expectItem() == list)
+                expectComplete()
+            }
+
+            viewModel.events.test {
+                assert(expectItem() == UiState.LoadingFinished)
             }
 
             Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
@@ -57,16 +90,24 @@ class PostViewModelTest {
     fun `Given a call to refreshPosts, error, should call the repository and emit the error`() =
         runBlockingTest {
 
+            val list = emptyList<Post>()
+
+            val errorMessage = "ERROR"
+
+            Mockito.`when`(postRepository.getPosts()).thenReturn(flowOf(list))
+            Mockito.`when`(postRepository.refreshPosts(POST_LIMIT))
+                .thenReturn(ResultWrapper.Error(errorMessage))
+
             viewModel.refreshPosts(POST_LIMIT)
 
-            Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
-        }
+            viewModel.posts.test {
+                assert(expectItem() == list)
+                expectComplete()
+            }
 
-    @Test
-    fun `Given a call to refreshPosts, items, should call the repository and emit the items`() =
-        runBlockingTest {
-
-            viewModel.refreshPosts(POST_LIMIT)
+            viewModel.events.test {
+                assert(expectItem() == UiState.Error(errorMessage))
+            }
 
             Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
         }
