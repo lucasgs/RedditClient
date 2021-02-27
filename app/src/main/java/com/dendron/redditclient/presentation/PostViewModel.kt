@@ -24,8 +24,7 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     val getEvents: LiveData<UiState> = events
 
     fun getPosts(limit: Int = 10) {
-
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when (val result = postRepository.getPosts(limit)) {
                 is ResultWrapper.Error -> events.postValue(UiState.Error(result.message))
                 is ResultWrapper.Success -> events.postValue(UiState.Load(result.data))
@@ -34,7 +33,7 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     }
 
     fun dismissPost(post: Post) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             postRepository.dismissPost(post)
             events.postValue(UiState.PostDismissed(post))
         }
@@ -46,7 +45,7 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
     }
 
     fun dismissAll() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             postRepository.dismissAll()
             events.postValue(UiState.AllDismissed)
         }
