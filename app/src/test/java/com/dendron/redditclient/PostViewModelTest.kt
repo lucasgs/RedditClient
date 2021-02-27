@@ -1,9 +1,10 @@
-package com.dendron.redditclient.presentation
+package com.dendron.redditclient
 
 import app.cash.turbine.test
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.presentation.PostViewModel
 import com.dendron.redditclient.utils.MainCoroutineScopeRule
 import com.dendron.redditclient.utils.POST_LIMIT
 import com.dendron.redditclient.utils.mockPostList
@@ -40,7 +41,7 @@ class PostViewModelTest {
 
     @Test
     fun `Given a call to refreshPosts, empty list, should call the repository and emit empty list`() =
-        coroutineScope.dispatcher.runBlockingTest {
+        runBlockingTest {
 
             val expected = emptyList<Post>()
 
@@ -55,8 +56,8 @@ class PostViewModelTest {
                 expectComplete()
             }
 
-            viewModel.events.test {
-                assert(expectItem() == UiState.LoadingFinished)
+            viewModel.spinner.test {
+                assert(!expectItem())
             }
 
             Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
@@ -79,8 +80,8 @@ class PostViewModelTest {
                 expectComplete()
             }
 
-            viewModel.events.test {
-                assert(expectItem() == UiState.LoadingFinished)
+            viewModel.spinner.test {
+                assert(!expectItem())
             }
 
             Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)
@@ -103,10 +104,6 @@ class PostViewModelTest {
             viewModel.posts.test {
                 assert(expectItem() == list)
                 expectComplete()
-            }
-
-            viewModel.events.test {
-                assert(expectItem() == UiState.Error(errorMessage))
             }
 
             Mockito.verify(postRepository, times(1)).refreshPosts(POST_LIMIT)

@@ -1,6 +1,7 @@
 package com.dendron.redditclient.utils
 
 import com.dendron.redditclient.domain.model.Post
+import com.dendron.redditclient.domain.model.Status
 
 const val POST_LIMIT = 2
 
@@ -12,7 +13,8 @@ fun mockPostList() = listOf(
         thumbnail = "thumb1",
         comments = 1,
         created = 1,
-        image = "image1"
+        image = "image1",
+        status = Status.unread
     ),
     Post(
         id = "2",
@@ -21,7 +23,8 @@ fun mockPostList() = listOf(
         thumbnail = "thumb2",
         comments = 2,
         created = 2,
-        image = "image2"
+        image = "image2",
+        status = Status.unread
     ),
     Post(
         id = "3",
@@ -30,6 +33,7 @@ fun mockPostList() = listOf(
         thumbnail = "thumb3",
         comments = 3,
         created = 3,
-        image = "image3"
+        image = "image3",
+        status = Status.unread
     ),
 )

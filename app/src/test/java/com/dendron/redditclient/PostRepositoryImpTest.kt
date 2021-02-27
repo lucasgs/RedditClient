@@ -1,6 +1,8 @@
-package com.dendron.redditclient.data
+package com.dendron.redditclient
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.dendron.redditclient.data.IsOnlineChecker
+import com.dendron.redditclient.data.PostRepositoryImp
 import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.ApiResult
@@ -162,14 +164,14 @@ class PostRepositoryImpTest {
         runBlockingTest {
             val post = mockPostList().first()
             repository.dismissPost(post)
-            Mockito.verify(localDataSource, times(1)).delete(post)
+            Mockito.verify(localDataSource, times(1)).dismissPost(post)
         }
 
     @Test
     fun `Given a call to dismissAll, should call the local data source`() =
         runBlockingTest {
             repository.dismissAll()
-            Mockito.verify(localDataSource, times(1)).deleteAll()
+            Mockito.verify(localDataSource, times(1)).dismissAll()
         }
 
 
