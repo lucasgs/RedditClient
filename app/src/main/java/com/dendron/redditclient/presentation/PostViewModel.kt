@@ -3,6 +3,7 @@ package com.dendron.redditclient.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dendron.redditclient.domain.PostRepository
+import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,8 +26,10 @@ class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
 
     fun refreshPosts(limit: Int = 10) {
         viewModelScope.launch {
-            postRepository.refreshPosts(limit)
-            _events.emit(UiState.LoadingFinished)
+            when (val result = postRepository.refreshPosts(limit)) {
+                is ResultWrapper.Error -> _events.emit(UiState.Error(result.message))
+                ResultWrapper.Success -> _events.emit(UiState.LoadingFinished)
+            }
         }
     }
 
