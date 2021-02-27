@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface RemoteDataSource {
 
-    suspend fun getPosts(limit: Int): Flow<ResultWrapper<List<Post>>>
+    suspend fun getPosts(limit: Int): ResultWrapper<List<Post>>
 
 }

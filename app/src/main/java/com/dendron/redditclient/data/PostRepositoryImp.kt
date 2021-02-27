@@ -5,7 +5,6 @@ import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
-import kotlinx.coroutines.flow.collect
 
 class PostRepositoryImp(
     private val remoteRemoteDataSource: RemoteDataSource,
@@ -14,12 +13,10 @@ class PostRepositoryImp(
 ) : PostRepository {
     override suspend fun getPosts(limit: Int): ResultWrapper<List<Post>> {
         if (isOnlineChecker.execute()) {
-            remoteRemoteDataSource.getPosts(limit).collect { result ->
-                when (result) {
-                    is ResultWrapper.Error -> ResultWrapper.Error(result.message)
-                    is ResultWrapper.Success -> {
-                        localDataSource.insertAll(result.data)
-                    }
+            when (val result = remoteRemoteDataSource.getPosts(limit)) {
+                is ResultWrapper.Error -> ResultWrapper.Error(result.message)
+                is ResultWrapper.Success -> {
+                    localDataSource.insertAll(result.data)
                 }
             }
         }

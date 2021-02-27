@@ -1,17 +1,16 @@
 package com.dendron.redditclient.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.dendron.redditclient.utils.POST_LIMIT
 import com.dendron.redditclient.data.datasource.LocalDataSource
 import com.dendron.redditclient.data.datasource.RemoteDataSource
 import com.dendron.redditclient.domain.PostRepository
 import com.dendron.redditclient.domain.ResultWrapper
 import com.dendron.redditclient.domain.model.Post
 import com.dendron.redditclient.utils.MainCoroutineScopeRule
+import com.dendron.redditclient.utils.POST_LIMIT
 import com.dendron.redditclient.utils.mockPostList
 import com.nhaarman.mockitokotlin2.times
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
@@ -62,7 +61,7 @@ class PostRepositoryImpTest {
             val localResult = emptyList<Post>()
             val expected = ResultWrapper.Success(localResult)
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(result))
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
             Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
@@ -81,7 +80,7 @@ class PostRepositoryImpTest {
             val result = ResultWrapper.Success(postList)
             val expected = ResultWrapper.Success(postList)
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(result))
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
             Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
@@ -101,7 +100,7 @@ class PostRepositoryImpTest {
             val result = ResultWrapper.Success(postList)
             val expected = ResultWrapper.Success(postList)
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(result))
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
             Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(postList)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
@@ -121,7 +120,7 @@ class PostRepositoryImpTest {
             val localResult = emptyList<Post>()
             val expected = ResultWrapper.Success(localResult)
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(result))
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
             Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
@@ -140,7 +139,7 @@ class PostRepositoryImpTest {
             val result = ResultWrapper.Success<List<Post>>(emptyList())
             val localResult = emptyList<Post>()
 
-            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(flowOf(result))
+            Mockito.`when`(remoteDataSource.getPosts(POST_LIMIT)).thenReturn(result)
             Mockito.`when`(localDataSource.getPosts(POST_LIMIT)).thenReturn(localResult)
             Mockito.`when`(isOnlineChecker.execute()).thenReturn(true)
 
