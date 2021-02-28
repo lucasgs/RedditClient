@@ -1,4 +1,4 @@
-## [reddit](https://www.reddit.com/) client
+## A simple [reddit](https://www.reddit.com/) client that shows the top 50 entries
 
 * Architecture
     * [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
