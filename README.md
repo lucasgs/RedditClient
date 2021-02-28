@@ -18,4 +18,3 @@
     * [Gson](https://github.com/google/gson)
     * [Picasso](https://square.github.io/picasso/)
     
-### Known issues / improvements
