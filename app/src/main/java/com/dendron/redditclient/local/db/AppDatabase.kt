@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.dendron.redditclient.local.model.PostEntity
 
-@Database(entities = [PostEntity::class], version = 1)
+@Database(entities = [PostEntity::class], version = 1, exportSchema = false )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao
 }
